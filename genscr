@@ -1,3 +1,25 @@
+#!/bin/bash
+
+# My automatatic pwntools template generation script
+
+# Check if binary name is provided
+if [ -z "$1" ]; then
+    echo "Usage: ./genscr <binary_name>"
+    exit 1
+fi
+
+BINARY_NAME="$1"
+
+# Find ld
+LD_FILE=$(find . -maxdepth 1 -type f -name "ld-*.so*" | head -n 1)
+
+
+# Define the Python template
+PYTHON_TEMPLATE='#!/usr/bin/env python3
+from pwn import *
+
+def start(argv=[], *a, **kw):
+    if args.GDB:  # Set GDBscript below
         return gdb.debug([exe] + argv, gdbscript=gdbscript, *a, **kw)
     elif args.REMOTE:  # ("server", "port")
         return remote(sys.argv[1], sys.argv[2], *a, **kw)
